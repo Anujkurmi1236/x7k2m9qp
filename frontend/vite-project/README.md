@@ -14,3 +14,19 @@ The React Compiler is not enabled on this template because of its impact on dev 
 ## Expanding the ESLint configuration
 
 If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+
+## FastAPI API client
+
+This project includes an Axios client at `src/api/fastapi.js` for:
+
+- `GET /api/health`
+- `GET /api/forecast`
+- `GET /api/accuracy`
+
+Set the backend URL in `.env`:
+
+```env
+VITE_FASTAPI_BASE_URL=http://127.0.0.1:8000
+```
+
+You can copy `.env.example` to `.env` and adjust it for your environment.
