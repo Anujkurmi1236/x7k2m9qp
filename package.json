@@ -1,0 +1,7 @@
+{
+  "name": "reint",
+  "private": true,
+  "scripts": {
+    "dev": "pnpm --dir frontend/vite-project run dev"
+  }
+}
