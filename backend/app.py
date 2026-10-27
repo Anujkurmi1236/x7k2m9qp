@@ -12,7 +12,7 @@ app.add_middleware(
     CORSMiddleware, allow_origins=["*"], allow_methods=["GET"], allow_headers=["*"]
 )
 
-DATA = Path(__file__).resolve().parent.parent / "data"
+DATA = Path(__file__).resolve().parent / "data"
 
 
 @lru_cache
