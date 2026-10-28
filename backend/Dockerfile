@@ -8,12 +8,12 @@ ENV UV_COMPILE_BYTECODE=1 \
     PYTHONUNBUFFERED=1
 
 COPY pyproject.toml uv.lock ./
-RUN uv sync --locked --no-dev --no-install-project \
-    && uv pip install --python /app/.venv/bin/python "uvicorn[standard]>=0.35"
+RUN uv sync --locked --no-dev --no-install-project
 
 COPY app.py ./
+COPY run_api.py ./
 COPY data ./data
 
 EXPOSE 8000
 
-CMD ["/app/.venv/bin/uvicorn", "app:app", "--host", "0.0.0.0", "--port", "8000"]
+CMD ["/app/.venv/bin/python", "run_api.py"]
