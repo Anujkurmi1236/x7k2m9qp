@@ -69,6 +69,9 @@ def fetch_forecasts(pub_from: datetime, pub_to: datetime) -> pd.DataFrame:
 
 if __name__ == "__main__":
     os.makedirs("data", exist_ok=True)
-    fetch_actuals(date(2026, 1, 1), date(2026, 2, 2)).to_parquet("data/actuals.parquet")
-    fetch_forecasts(datetime(2025, 12, 25), datetime(2026, 2, 1)).to_parquet("data/forecasts.parquet")
+    fetch_actuals(date(2026, 1, 1), date(2026, 10, 31)).to_parquet("data/actuals.parquet")
+    fetch_forecasts(
+        datetime(2025, 12, 25),
+        datetime(2026, 10, 30),
+    ).to_parquet("data/forecasts.parquet")
 
