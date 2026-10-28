@@ -1,122 +1,64 @@
 import { useState } from 'react'
-import heroImg from './assets/hero.png'
-import reactLogo from './assets/react.svg'
-import viteLogo from './assets/vite.svg'
+import Controls from './components/Controls'
+import ErrorChart from './components/ErrorChart'
+import ForecastChart from './components/ForecastChart'
+import Metrics from './components/Metrics'
+import { useAccuracy, useForecast } from './hooks/useWindData'
 import './App.css'
 
-function App() {
-  const [count, setCount] = useState(0)
-
-  return (
-    <>
-      <section id="center">
-        <div className="hero">
-          <img src={heroImg} className="base" width="170" height="179" alt="" />
-          <img src={reactLogo} className="framework" alt="React logo" />
-          <img src={viteLogo} className="vite" alt="Vite logo" />
-        </div>
-        <div>
-          <h1>Get started</h1>
-          <p>
-            Edit <code>src/App.jsx</code> and save to test <code>HMR</code>
-          </p>
-        </div>
-        <button
-          type="button"
-          className="counter"
-          onClick={() => setCount((count) => count + 1)}
-        >
-          Count is {count}
-        </button>
-      </section>
-
-      <div className="ticks"></div>
-
-      <section id="next-steps">
-        <div id="docs">
-          <svg className="icon" role="presentation" aria-hidden="true">
-            <use href="/icons.svg#documentation-icon"></use>
-          </svg>
-          <h2>Documentation</h2>
-          <p>Your questions, answered</p>
-          <ul>
-            <li>
-              <a href="https://vite.dev/" target="_blank">
-                <img className="logo" src={viteLogo} alt="" />
-                Explore Vite
-              </a>
-            </li>
-            <li>
-              <a href="https://react.dev/" target="_blank">
-                <img className="button-icon" src={reactLogo} alt="" />
-                Learn more
-              </a>
-            </li>
-          </ul>
-        </div>
-        <div id="social">
-          <svg className="icon" role="presentation" aria-hidden="true">
-            <use href="/icons.svg#social-icon"></use>
-          </svg>
-          <h2>Connect with us</h2>
-          <p>Join the Vite community</p>
-          <ul>
-            <li>
-              <a href="https://github.com/vitejs/vite" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#github-icon"></use>
-                </svg>
-                GitHub
-              </a>
-            </li>
-            <li>
-              <a href="https://chat.vite.dev/" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#discord-icon"></use>
-                </svg>
-                Discord
-              </a>
-            </li>
-            <li>
-              <a href="https://x.com/vite_js" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#x-icon"></use>
-                </svg>
-                X.com
-              </a>
-            </li>
-            <li>
-              <a href="https://bsky.app/profile/vite.dev" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#bluesky-icon"></use>
-                </svg>
-                Bluesky
-              </a>
-            </li>
-          </ul>
-        </div>
-      </section>
-
-      <div className="ticks"></div>
-      <section id="spacer"></section>
-    </>
-  )
+const DEFAULTS = {
+  date: '2026-01-15',
+  cutoff: '09:00',
+  dateFrom: '2026-01-01',
+  dateTo: '2026-01-31',
 }
 
-export default App
+function Status({ loading, error, children }) {
+  if (error) return <p className="status status--error">{error}</p>
+  if (loading) return <p className="status">Loading…</p>
+  return children
+}
+
+export default function App() {
+  const [params, setParams] = useState(DEFAULTS)
+  const forecast = useForecast({ date: params.date, cutoff: params.cutoff })
+  const accuracy = useAccuracy({
+    dateFrom: params.dateFrom,
+    dateTo: params.dateTo,
+    cutoff: params.cutoff,
+  })
+
+  return (
+    <main className="page">
+      <header className="page__head">
+        <h1>Wind forecast vs actual</h1>
+        <p>
+          GB wind generation. Each half-hour uses the latest forecast published
+          before the cutoff on the day before delivery. All times UTC.
+        </p>
+      </header>
+
+      <Controls values={params} onChange={setParams} />
+
+      <section>
+        <h2>Accuracy, {params.dateFrom} to {params.dateTo}</h2>
+        <Status loading={accuracy.loading} error={accuracy.error}>
+          {accuracy.data && <Metrics data={accuracy.data} />}
+        </Status>
+      </section>
+
+      <section>
+        <h2>{params.date}</h2>
+        <Status loading={forecast.loading} error={forecast.error}>
+          {forecast.data && (
+            <>
+              <ForecastChart rows={forecast.data} />
+              <h3>Forecast error (forecast minus actual)</h3>
+              <ErrorChart rows={forecast.data} />
+            </>
+          )}
+        </Status>
+      </section>
+    </main>
+  )
+}
