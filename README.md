@@ -46,6 +46,46 @@ The frontend image is built with
 `VITE_FASTAPI_BASE_URL=http://localhost:8000`, which is the URL the browser
 uses to reach the published backend port.
 
+## Deploy on Render with Docker
+
+Deploy the backend and frontend as two separate Render Web Services. Render
+does not deploy both Compose services as a single service.
+
+### Backend Web Service
+
+Create a Docker Web Service with:
+
+- **Root Directory:** `backend`
+- **Dockerfile Path:** `Dockerfile`
+- **Docker Command:** leave blank to use the Dockerfile `CMD`
+- **Region:** Singapore
+
+The backend image uses Render's `PORT` environment variable and listens on
+`0.0.0.0`. After deployment, check:
+
+```text
+https://<backend-service>.onrender.com/api/health
+```
+
+### Frontend Web Service
+
+Create a second Docker Web Service with:
+
+- **Root Directory:** `frontend`
+- **Dockerfile Path:** `Dockerfile`
+- **Docker Command:** leave blank to use the Dockerfile `CMD`
+- **Region:** Singapore
+
+Add this Docker build argument in the frontend service:
+
+```text
+VITE_FASTAPI_BASE_URL=https://<backend-service>.onrender.com
+```
+
+Vite embeds this value during the image build, so it must be the public
+backend URL and must be set before each frontend build. Do not use
+`http://localhost:8000` in the Render frontend service.
+
 ## Run the backend locally
 
 The backend requires Python 3.13 or newer and uses `uv` for dependency
