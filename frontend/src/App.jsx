@@ -1,9 +1,9 @@
 import { useState } from 'react'
-import Controls from './components/Controls'
-import ErrorChart from './components/ErrorChart'
-import ForecastChart from './components/ForecastChart'
-import Metrics from './components/Metrics'
-import { useAccuracy, useForecast } from './hooks/useWindData'
+import Controls from './components/Controls.jsx'
+import ErrorChart from './components/ErrorChart.jsx'
+import ForecastChart from './components/ForecastChart.jsx'
+import Metrics from './components/Metrics.jsx'
+import { useAccuracy, useForecast } from './hooks/useWindData.js'
 import './App.css'
 
 const DEFAULTS = {
